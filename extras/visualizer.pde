@@ -7,6 +7,8 @@ float roll = 0.0;
 float deltax = 0.0, deltay = 0.0;
 float sx = 0.0, sy = 0.0, sz = 0.0;
 
+int scaling_factor = 100;
+
 void setup()
 {
   size(600, 500, P3D);
@@ -23,8 +25,8 @@ void draw()
   background(255); // set background to white
   lights();
   
-  //deltax += sy * 100;
-  //deltay += sz * 100;
+  deltax += sy * scaling_factor;
+  deltay += sz * scaling_factor;
 
   translate(width/2 + deltax, height/2 + deltay); // set position to centre
 

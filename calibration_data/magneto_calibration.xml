@@ -1,0 +1,85 @@
+<maggridresult>
+<version>
+0.5.1.11
+</version>
+<model>
+WMM-2020
+</model>
+<result>
+<date>
+2023.11781
+</date>
+<latitude units = "Degree">
+45.66750
+</latitude>
+<longitude units="Degree">
+9.76722
+</longitude>
+<elevation units="km">
+0.25500
+</elevation>
+<declination units="Degree">
+3.48009
+</declination>
+<inclination units="Degree">
+61.92412
+</inclination>
+<horintensity units="nanoTesla (nT)">
+22501.7
+</horintensity>
+<totalintensity units="nanoTesla (nT)">
+47810.7
+</totalintensity>
+<xcomponent units="nanoTesla (nT)">
+22460.2
+</xcomponent>
+<ycomponent units="nanoTesla (nT)">
+1365.9
+</ycomponent>
+<zcomponent units="nanoTesla (nT)">
+42184.6
+</zcomponent>
+<declination_sv units="Degree">
+0.15266
+</declination_sv>
+<inclination_sv units="Degree">
+0.02029
+</inclination_sv>
+<horintensity_sv units="nanoTesla (nT)">
+10.2
+</horintensity_sv>
+<totalintensity_sv units="nanoTesla (nT)">
+53.4
+</totalintensity_sv>
+<xcomponent_sv units="nanoTesla (nT)">
+6.6
+</xcomponent_sv>
+<ycomponent_sv units="nanoTesla (nT)">
+60.5
+</ycomponent_sv>
+<zcomponent_sv units="nanoTesla (nT)">
+55.1
+</zcomponent_sv>
+<declination_uncertainty units="Degree">
+0.36
+</declination_uncertainty>
+<inclination_uncertainty units="Degree">
+0.21
+</inclination_uncertainty>
+<horintensity_uncertainty units="nanoTesla (nT)">
+128
+</horintensity_uncertainty>
+<totalintensity_uncertainty units="nanoTesla (nT)">
+145
+</totalintensity_uncertainty>
+<ycomponent_uncertainty units="nanoTesla (nT)">
+94
+</ycomponent_uncertainty>
+<xcomponent_uncertainty units="nanoTesla (nT)">
+131
+</xcomponent_uncertainty>
+<zcomponent_uncertainty units="nanoTesla (nT)">
+157
+</zcomponent_uncertainty>
+</result>
+</maggridresult>
