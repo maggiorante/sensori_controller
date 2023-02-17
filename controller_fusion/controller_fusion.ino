@@ -8,14 +8,16 @@ const float cutoff_freq = 200.0f;
 const float sampling_time = 0.00210084f;
 IIR::ORDER order = IIR::ORDER::OD1;
 Filter filter_accel(cutoff_freq, sampling_time, order);
-const int scaling_factor = 100;
+const int scaling_factor = 800;
 
 // Orientation tracking filter
 SF fusion;
 float deltat;
 
 // Motion tracking
-const float trans_thresh = 10.0; // threshold for motion = 3 m/s^2
+float ax_old = 0.0f, ay_old = 0.0f, az_old = 0.0f; // needed to compute position (trapezoidal quadrature)
+float vx_old = 0.0f, vy_old = 0.0f, vz_old = 0.0f; // needed to compute position (trapezoidal quadrature)
+const float trans_thresh = 0.0; // threshold for motion = 3 m/s^2
 
 // Sensor data
 float ax = 0.0, ay = 0.0, az = 0.0; // accelerometer data
@@ -82,32 +84,51 @@ void loop() {
   pitch = fusion.getPitchRadians();
   yaw = fusion.getYawRadians();
 
-  // Remove gravity component using the rotation matrix derived from rpy
-  gravx = 9.81 * (cos(yaw) * sin(pitch) * cos(roll) + sin(yaw) * sin(roll));
-  gravy = 9.81 * (sin(yaw) * sin(pitch) * cos(roll) - cos(yaw) * sin(roll));
-  gravz = 9.81 * (cos(pitch) * cos(roll));
+  float ax_temp, ay_temp, az_temp;
 
-  ax -= gravx;
-  ay -= gravy;
-  az -= gravz;
+  // Remove gravity component using the rotation matrix derived from rpy
+  ax_temp = ax * (cos(pitch) * cos(yaw)) + ay * (sin(roll) * sin(pitch) * cos(yaw) - cos(roll) * sin(yaw)) + az * (sin(roll) * sin(yaw) + cos(roll) * sin(pitch) * cos(yaw));
+  ay_temp = ax * (cos(pitch) * sin(yaw)) + ay * (cos(roll) * cos(yaw) + sin(roll) * sin(pitch) * sin(yaw)) + az * (cos(roll) * sin(pitch) * sin(yaw) - sin(roll) * cos(yaw));
+  az_temp = ax * (-sin(pitch)) + ay * (sin(roll) * cos(pitch)) + az * (cos(roll) * cos(pitch));
+
+  az_temp -= 9.81;
+
+  ax = ax_temp;
+  ay = ay_temp;
+  az = az_temp;
 
   // ax = filter_accel.filterIn(ax);
   // ay = filter_accel.filterIn(ay);
   // az = filter_accel.filterIn(az);
-  ax *= scaling_factor;
-  ay *= scaling_factor;
-  az *= scaling_factor;
 
   // Only integrate if motion is bigger than threshold
   int trans = ax*ax + ay*ay + az*az;
   if (trans > trans_thresh) {
-    vx = ax * deltat;
-    vy = ay * deltat;
-    vz = az * deltat;
+    vx = (ax_old + ax) * deltat / 2;
+    vy = (ay_old + ay) * deltat / 2;
+    vz = (az_old + az) * deltat / 2;
 
-    sx = vx * deltat;
-    sy = vy * deltat;
-    sz = vz * deltat;
+    sx = (vx_old + vx) * deltat / 2;
+    sy = (vy_old + vy) * deltat / 2;
+    sz = (vz_old + vz) * deltat / 2;
+
+    ax_old = ax;
+    ay_old = ay;
+    az_old = az;
+    vx_old = vx;
+    vy_old = vy;
+    vz_old = vz;
+
+    sx *= scaling_factor;
+    sy *= scaling_factor;
+    sz *= scaling_factor;
+  } else {
+    ax_old = 0;
+    ay_old = 0;
+    az_old = 0;
+    vx_old = 0;
+    vy_old = 0;
+    vz_old = 0;
   }
 
   Serial.print(String(pitch) + ":" + String(roll) + ":" + String(yaw));
