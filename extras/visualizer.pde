@@ -11,7 +11,7 @@ int scaling_factor = 100;
 
 void setup()
 {
-  size(600, 500, P3D);
+  size(1000, 1000, P3D);
 
   myPort = new Serial(this, "/dev/ttyACM0", 115200);
   myPort.bufferUntil('\n');
@@ -25,8 +25,16 @@ void draw()
   background(255); // set background to white
   lights();
   
-  deltax += sy * scaling_factor;
+  deltax += sx * -scaling_factor;
   deltay += sz * scaling_factor;
+  float deltax_positive = deltax > 0 ? 0 : 1;
+  float deltay_positive = deltay > 0 ? 0 : 1;
+  if (abs(deltax) >=  250.0) {
+    deltax = 250 * pow(-1, deltax_positive);
+  }
+  if (abs(deltay) >= 250.0) {
+    deltay = 250 * pow(-1, deltay_positive);
+  }
 
   translate(width/2 + deltax, height/2 + deltay); // set position to centre
 

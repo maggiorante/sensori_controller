@@ -126,21 +126,22 @@ void loop() {
       pitch = fusion.getPitchRadians();
       yaw = fusion.getYawRadians();
 
-      // Remove gravity component using the rotation matrix derived from rpy
-      gravx = 9.81 * (cos(yaw) * sin(pitch) * cos(roll) + sin(yaw) * sin(roll));
-      gravy = 9.81 * (sin(yaw) * sin(pitch) * cos(roll) - cos(yaw) * sin(roll));
-      gravz = 9.81 * (cos(pitch) * cos(roll));
+      float ax_temp, ay_temp, az_temp;
 
-      ax -= gravx;
-      ay -= gravy;
-      az -= gravz;
+      // Remove gravity component using the rotation matrix derived from rpy
+      ax_temp = ax * (cos(pitch) * cos(yaw)) + ay * (sin(roll) * sin(pitch) * cos(yaw) - cos(roll) * sin(yaw)) + az * (sin(roll) * sin(yaw) + cos(roll) * sin(pitch) * cos(yaw));
+      ay_temp = ax * (cos(pitch) * sin(yaw)) + ay * (cos(roll) * cos(yaw) + sin(roll) * sin(pitch) * sin(yaw)) + az * (cos(roll) * sin(pitch) * sin(yaw) - sin(roll) * cos(yaw));
+      az_temp = ax * (-sin(pitch)) + ay * (sin(roll) * cos(pitch)) + az * (cos(roll) * cos(pitch));
+
+      az_temp -= 9.81;
+
+      ax = ax_temp;
+      ay = ay_temp;
+      az = az_temp;
 
       // ax = filter_accel.filterIn(ax);
       // ay = filter_accel.filterIn(ay);
       // az = filter_accel.filterIn(az);
-      ax *= scaling_factor;
-      ay *= scaling_factor;
-      az *= scaling_factor;
 
       // Only integrate if motion is bigger than threshold
       int trans = ax*ax + ay*ay + az*az;
@@ -152,6 +153,10 @@ void loop() {
         sx = vx * deltat;
         sy = vy * deltat;
         sz = vz * deltat;
+
+        sx *= scaling_factor;
+        sy *= scaling_factor;
+        sz *= scaling_factor;
       }
 
       writeLength = sprintf(bleBuffer, "%f", pitch);
